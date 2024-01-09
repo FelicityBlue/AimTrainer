@@ -67,12 +67,15 @@ int main()
     TEXT diffText = TEXT(sf::Color::White, font8Bits, sf::Vector2f(windowWidth / 2 - 75, windowHeight / 2 + 30), "Difficulty"); // Difficulty
     TEXT easyText = TEXT(sf::Color::White, font8Bits, sf::Vector2f(windowWidth / 2 - 40, windowHeight / 2 - 80), "Easy"); // Easy
     TEXT hardText = TEXT(sf::Color::White, font8Bits, sf::Vector2f(windowWidth / 2 - 40, windowHeight / 2 + 15), "Hard"); // Hard
+    TEXT exitText = TEXT(sf::Color::White, font8Bits, sf::Vector2f(windowWidth / 2 - 30, windowHeight - 95), "Exit"); // Exit
+    TEXT yourScoreText = TEXT(sf::Color::White, font8Bits, sf::Vector2f(windowWidth / 2 - 90, windowHeight/2 - 100), "Your Score"); // Your Score
 
     // buttons
     BUTTON playButton = BUTTON(PINK, sf::Vector2f(300, 70), sf::Vector2f(windowWidth/2 - 150, windowHeight / 2 - 70));
     BUTTON diffButton = BUTTON(PINK, sf::Vector2f(300, 70), sf::Vector2f(windowWidth/2 - 150, windowHeight / 2 + 20));
     BUTTON easyButton = BUTTON(PINK, sf::Vector2f(300, 75), sf::Vector2f(windowWidth/2 - 150, windowHeight / 2 - 100 ));
     BUTTON hardButton = BUTTON(PINK, sf::Vector2f(300, 75), sf::Vector2f(windowWidth/2 - 150, windowHeight / 2 ));
+    BUTTON exitButton = BUTTON(PINK, sf::Vector2f(200, 50), sf::Vector2f(windowWidth / 2 - 100, windowHeight - 100 ));
 
     while (window.isOpen())
     {
@@ -122,7 +125,7 @@ int main()
                         if (event.mouseButton.button == sf::Mouse::Left) {
 
                             if (clicked(easyButton.getPos(), easyButton.getSize(), event.mouseButton)) {
-
+                                std::cout << "Current Mode: Easy \n";
                                 radius = 40.f;
                                 cir.setRadius(radius);
                                 cir.setPosition(newTargetPos);
@@ -131,7 +134,7 @@ int main()
                                 targetCen = sf::Vector2f(cir.getPosition().x + radius, cir.getPosition().y + radius);
                             }
                             else if (clicked(hardButton.getPos(), hardButton.getSize(), event.mouseButton)) {
-
+                                std::cout << "Current Mode: Hard \n";
                                 radius = 20.f;
                                 cir.setRadius(radius);
                                 cir.setPosition(newTargetPos);
@@ -139,18 +142,22 @@ int main()
                                 newTargetPos = getRandomCoor(windowWidth, windowHeight, 2 * radius);
                                 targetCen = sf::Vector2f(cir.getPosition().x + radius, cir.getPosition().y + radius);
                             }
-
-
+                            else if (clicked(exitButton.getPos(), exitButton.getSize(), event.mouseButton)) {
+                                currScene = Scene::MainMenu;
+                            }
                         }
-                        currScene = Scene::MainMenu;
                         break;
-
                     default:
                         break;
                     }
                     break;
                 case Scene::Game:
                     if (event.mouseButton.button == sf::Mouse::Left) {
+                        if (total == 10) {
+                            currScene = Scene::GameOver;
+                            scoreText.setNewPos(sf::Vector2f(windowWidth / 2 - 60, windowHeight/2));
+                            break;
+                        }
                         total++;
                         // get coor of clicked place
                         std::cout << "Left Mouse Button is pressed at x: " << event.mouseButton.x <<
@@ -182,10 +189,18 @@ int main()
                         scoreText.setNewString(score);
                     }
                     break;
+                case Scene::GameOver:
+                    if (clicked(exitButton.getPos(), exitButton.getSize(), event.mouseButton)) {
+                        currScene = Scene::MainMenu;
+                    }
+                    break;
                 default:
                     break;
                 }
+
             case sf::Event::KeyPressed:
+                if (event.type == sf::Event::Closed)
+                    window.close();
                 // return to main menu
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                     currScene = Scene::MainMenu;
@@ -215,12 +230,20 @@ int main()
         case Scene::Difficulty:
             window.draw(easyButton.button);
             window.draw(hardButton.button);
+            window.draw(exitButton.button);
             window.draw(easyText.text);
             window.draw(hardText.text);
+            window.draw(exitText.text);
             break;
         case Scene::Game:
             window.draw(cir);
             window.draw(scoreText.text);
+            break;
+        case Scene::GameOver:
+            window.draw(exitButton.button);
+            window.draw(yourScoreText.text);
+            window.draw(scoreText.text);
+            window.draw(exitText.text);
             break;
         default:
             break;
