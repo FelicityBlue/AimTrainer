@@ -3,11 +3,49 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 
+// global variables
+int windowWidth = 800, windowHeight = 600;
 
 enum class Scene {
     MainMenu,
     Difficulty,
     Game
+};
+
+class Button {
+public:
+    sf::RectangleShape button;
+    // getters
+    sf::Vector2f getSize() {
+        return currSize;
+    }
+    sf::Vector2f getPos() {
+        return currPos;
+    }
+    sf::Color getColor() {
+        return currColor;
+    }
+    // setters
+    void setSize(sf::Vector2f newSize) {
+        currSize = newSize;
+    }
+    void setPos(sf::Vector2f newPos) {
+        currPos = newPos;
+    }
+    void setColor(sf::Color newColor) {
+        currColor = newColor;
+    }
+    // create
+    Button (sf::Color color, sf::Vector2f size, sf::Vector2f pos) : currColor(color), currPos(pos), currSize(size) {
+        button.setFillColor(color);
+        button.setPosition(pos.x, pos.y);
+        button.setSize(size);
+    };
+private:
+    sf::Vector2f currSize;
+    sf::Vector2f currPos;
+    sf::Color currColor;
+    
 };
 
 // get a random coor inside the window
@@ -30,14 +68,12 @@ float calculateDist(sf::Vector2f center, sf::Event::MouseButtonEvent mouse) {
 }
 
 
-
 int main()
 {
 
     
-    int width = 800, height = 600;
     // create window
-    sf::RenderWindow window(sf::VideoMode(width, height), "Aim Trainer");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Aim Trainer");
     window.setFramerateLimit(60);
     sf::Event e;
 
@@ -56,7 +92,7 @@ int main()
     // initialization
     Scene currScene = Scene::Game;
 
-    sf::Vector2f oldPos = getRandomCoor(width, height, diameter);
+    sf::Vector2f oldPos = getRandomCoor(windowWidth, windowHeight, diameter);
     sf::Vector2f newPos;
     
     // targets
@@ -72,9 +108,11 @@ int main()
     // score
     sf::Text scoreText;
     scoreText.setFont(fontDigitalTech);
-    scoreText.setPosition(width / 2 - 60, 15);
+    scoreText.setPosition(windowWidth / 2 - 60, 15);
     std::string score = " " + std::to_string(hit) + " / " + std::to_string(total);
     scoreText.setString(score);
+
+
 
     while (window.isOpen()) {
         // while there are still events happening
@@ -100,13 +138,13 @@ int main()
                                 (newPos.x < (oldPos.x - diameter) || (newPos.x > (oldPos.x + diameter)))
                                 ))
                             {
-                                newPos = getRandomCoor(width, height, diameter);
+                                newPos = getRandomCoor(windowWidth, windowHeight, diameter);
                                 std::cout << "\nNew center is x: " << targetCen.x << " y: " << targetCen.y << std::endl;
                             }
 
                             cir.setPosition(newPos);
                             oldPos = newPos;
-                            newPos = getRandomCoor(width, height, diameter);
+                            newPos = getRandomCoor(windowWidth, windowHeight, diameter);
                             targetCen = sf::Vector2f(cir.getPosition().x + radius, cir.getPosition().y + radius);
 
                         }
