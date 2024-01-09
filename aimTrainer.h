@@ -60,7 +60,7 @@ public:
         return text.getString();
     }
     // setters
-    void setNewFont(sf::Font newFont) {
+    void setNewFont(sf::Font& newFont) {
         text.setFont(newFont);
     }
     void setNewPos(sf::Vector2f newPos) {
