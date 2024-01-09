@@ -6,7 +6,8 @@
 enum class Scene {
     MainMenu,
     Difficulty,
-    Game
+    Game,
+    GameOver
 };
 
 class BUTTON {
